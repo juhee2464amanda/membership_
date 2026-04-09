@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Pretendard','Noto Sans SC',sans-serif; background:#fff; color:#1a1a1a; }
+
+  /* ── Status Bar ── */
+  .status-bar {
+    height: 24px;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 14px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  /* ── Top Header (matching U+one MY page) ── */
+  .top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px 8px;
+    background: #fff;
+  }
+  .top-header .page-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1a1a1a;
+  }
+  .header-icons-img {
+    height: 22px;
+    width: auto;
+  }
+
+  /* ── Language Bar ── */
+  .lang-bar {
+    display: flex;
+    gap: 4px;
+    padding: 6px 12px;
+    background: #fff;
+    overflow-x: auto;
+  }
+  .lang-bar::-webkit-scrollbar { display: none; }
+  .lang-pill {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: 14px;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    color: #82817e;
+    font-size: 9px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .lang-pill.active {
+    background: #ff2e98;
+    border-color: #ff2e98;
+    color: #fff;
+  }
+
+  /* ── Grade Card ── */
+  .grade-card {
+    margin: 10px 12px;
+    background: #22171c;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .grade-left .vip-pill {
+    display: inline-block;
+    background: #ff2e98;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 4px;
+    letter-spacing: 0.04em;
+  }
+  .grade-left .grade-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .grade-left .grade-sub {
+    font-size: 9px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 1px;
+  }
+  .grade-right {
+    text-align: right;
+  }
+  .grade-right .grade-num {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ff2e98;
+    line-height: 1;
+  }
+  .grade-right .grade-num sup {
+    font-size: 14px;
+    vertical-align: 4px;
+  }
+  .grade-right .grade-label {
+    font-size: 8px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 2px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Barcode Card ── */
+  .barcode-card {
+    margin: 0 12px 10px;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 12px 14px 10px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .barcode-card .bc-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+  }
+  .barcode-card .bc-bars {
+    height: 36px;
+    background: repeating-linear-gradient(
+      to right,
+      #1a1a1a 0,
+      #1a1a1a 2px,
+      #fff 2px,
+      #fff 3px,
+      #1a1a1a 3px,
+      #1a1a1a 4px,
+      #fff 4px,
+      #fff 6px,
+      #1a1a1a 6px,
+      #1a1a1a 7px,
+      #fff 7px,
+      #fff 8px,
+      #1a1a1a 8px,
+      #1a1a1a 11px,
+      #fff 11px,
+      #fff 12px
+    );
+    margin-bottom: 6px;
+    border-radius: 2px;
+  }
+  .barcode-card .bc-num {
+    font-size: 9px;
+    color: #999;
+    letter-spacing: 0.1em;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 4px;
+  }
+  .barcode-card .bc-hint {
+    font-size: 8px;
+    color: #82817e;
+  }
+
+  /* ── Section ── */
+  .section {
+    padding: 10px 12px;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+  .section-title em {
+    color: #1a1a1a;
+    font-style: normal;
+  }
+
+  /* ── Category Tabs ── */
+  .cat-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .cat-tab {
+    font-size: 8px;
+    font-weight: 700;
+    padding: 4px 8px;
+    background: #f4f4f4;
+    border: none;
+    border-radius: 12px;
+    color: #82817e;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .cat-tab.active {
+    background: #ff2e98;
+    color: #fff;
+  }
+  .b-card.hidden {
+    display: none;
+  }
+
+  /* ── Benefit Card ── */
+  .b-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 11px;
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .b-card img {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    object-fit: contain;
+    background: #f8f8f8;
+    padding: 3px;
+    flex-shrink: 0;
+  }
+  .b-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .b-info .b-name {
+    font-size: 9px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .b-info .b-desc {
+    font-size: 8px;
+    color: #ff2e98;
+    font-weight: 600;
+    margin-top: 2px;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .b-tag {
+    font-size: 7px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+  }
+  .b-tag-easy {
+    background: #fce4f0;
+    color: #c0006a;
+  }
+  .b-tag-vip {
+    background: #ff2e98;
+    color: #fff;
+  }
+
+  /* ── Usage Tracker (under grade card) ── */
+  .usage-row {
+    margin: -6px 12px 8px;
+    background: #2d1f24;
+    padding: 7px 14px;
+    border-radius: 0 0 10px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+  }
+  .usage-row .u-label {
+    color: rgba(255,255,255,0.55);
+  }
+  .usage-row .u-count {
+    color: #ff2e98;
+    font-weight: 800;
+    font-size: 10px;
+  }
+
+  /* ── Usage Tip (3-step, U+ one card style) ── */
+  .usage-tip {
+    margin: 0 12px 10px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .tip-title {
+    font-size: 9px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  .tip-steps {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .tip-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+  }
+  .tip-step .step-circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #999;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .tip-step .step-label {
+    font-size: 7px;
+    color: #666;
+    font-weight: 400;
+    text-align: center;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .tip-arrow {
+    font-size: 10px;
+    color: #d0d0d0;
+    margin-top: -10px;
+  }
+
+  /* ── More benefits teaser ── */
+  .more-section {
+    padding: 10px 12px 12px;
+    background: #fafafa;
+    border-top: 1px solid #f0f0f0;
+  }
+  .more-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+  }
+  .more-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: #1a1a1a;
+  }
+  .more-arrow {
+    font-size: 9px;
+    color: #ff2e98;
+    font-weight: 700;
+  }
+  .more-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .more-pill {
+    font-size: 8px;
+    font-weight: 600;
+    padding: 4px 8px;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 10px;
+    color: #555;
+  }
+
+  /* ── Bottom Nav (image-based) ── */
+  .bottom-nav-img {
+    width: 100%;
+    display: block;
+    border-top: 1px solid #f0f0f0;
+  }
+</style>
+<script>
+const translations = {
+  ko: {
+    title: '혜택',
+    gradeText: 'VIP 등급', gradeSub: '매달 자동 갱신',
+    statLabel: 'OPTIONS',
+    usageLabel: '이번 달 사용', usageCount: '2개 / 140',
+    bcTitle: '내 멤버십 바코드',
+    bcHint: '계산할 때 이 화면을 보여주세요',
+    easyTitle: '추천 혜택',
+    tipTitle: '사용법', step1: '바코드 열기', step2: '매장에서 제시', step3: '자동 할인',
+    catAll: '전체', catFb: '편의점·F&B', catCafe: '카페', catPark: '놀이공원',
+    gs25: 'GS25', gs25d: '100원 할인 / 1,000원',
+    paris: '파리바게뜨', parisd: '100원 할인 / 1,000원',
+    tlj: '뚜레쥬르', tljd: '150원 할인 / 1,000원',
+    baskin: '배스킨라빈스', baskind: '쿼터사이즈 4,000원 할인',
+    gsfresh: 'GS THE FRESH', gsfreshd: '5만원↑ 2,000원 할인',
+    starbucks: '스타벅스', starbucksd: '아메리카노 1잔 무료 · 월 1회',
+    lotte: '롯데월드', lotted: '종합이용권 42% 할인',
+    everland: '에버랜드', everlandd: '종일권 본인 40%',
+    caribbean: '캐리비안베이', caribbeand: '본인 40% (동반 1인 30%)',
+    seoulsky: '서울스카이', seoulskyd: '본인 30% (동반 3인 10%)',
+    tagEasy: '바코드', tagVip: 'VIP',
+    moreTitle: '더 많은 혜택', moreArrow: '보러가기 →',
+    cat1: '☕ 카페·디저트', cat2: '🎢 놀이동산',
+    cat3: '🎬 영화', cat4: '🛍 쇼핑·면세점'
+  },
+  en: {
+    title: 'Benefits',
+    gradeText: 'VIP Grade', gradeSub: 'Auto-renewed monthly',
+    statLabel: 'OPTIONS',
+    usageLabel: 'Used this month', usageCount: '2 / 140',
+    bcTitle: 'My Membership Barcode',
+    bcHint: 'Show this when you pay',
+    easyTitle: 'Recommended',
+    tipTitle: 'How to use', step1: 'Open barcode', step2: 'Show at store', step3: 'Auto discount',
+    catAll: 'All', catFb: 'Convenience·F&B', catCafe: 'Café', catPark: 'Theme Park',
+    gs25: 'GS25', gs25d: '₩100 off per ₩1,000',
+    paris: 'Paris Baguette', parisd: '₩100 off per ₩1,000',
+    tlj: 'Tous Les Jours', tljd: '₩150 off per ₩1,000',
+    baskin: 'Baskin Robbins', baskind: '₩4,000 off Quarter size',
+    gsfresh: 'GS THE FRESH', gsfreshd: '₩2,000 off ₩50,000+',
+    starbucks: 'Starbucks', starbucksd: 'Free Americano · 1/month',
+    lotte: 'Lotte World', lotted: '42% off day pass',
+    everland: 'Everland', everlandd: '40% off day pass',
+    caribbean: 'Caribbean Bay', caribbeand: '40% off (+1 30%)',
+    seoulsky: 'Seoul Sky', seoulskyd: '30% off (+3 10%)',
+    tagEasy: 'Barcode', tagVip: 'VIP',
+    moreTitle: 'More benefits', moreArrow: 'View all →',
+    cat1: '☕ Café·Dessert', cat2: '🎢 Theme Park',
+    cat3: '🎬 Movie', cat4: '🛍 Shopping·Duty Free'
+  },
+  vi: {
+    title: 'Ưu đãi',
+    gradeText: 'Hạng VIP', gradeSub: 'Tự động gia hạn',
+    statLabel: 'TÙY CHỌN',
+    usageLabel: 'Đã dùng tháng này', usageCount: '2 / 140',
+    bcTitle: 'Mã vạch thành viên',
+    bcHint: 'Đưa khi thanh toán',
+    easyTitle: 'Đề xuất',
+    tipTitle: 'Cách dùng', step1: 'Mở mã vạch', step2: 'Đưa tại cửa hàng', step3: 'Giảm tự động',
+    catAll: 'Tất cả', catFb: 'Tiện lợi·F&B', catCafe: 'Cà phê', catPark: 'Công viên',
+    gs25: 'GS25', gs25d: 'Giảm ₩100 / ₩1,000',
+    paris: 'Paris Baguette', parisd: 'Giảm ₩100 / ₩1,000',
+    tlj: 'Tous Les Jours', tljd: 'Giảm ₩150 / ₩1,000',
+    baskin: 'Baskin Robbins', baskind: 'Giảm ₩4,000 Quarter',
+    gsfresh: 'GS THE FRESH', gsfreshd: 'Giảm ₩2,000 / ₩50,000+',
+    starbucks: 'Starbucks', starbucksd: 'Americano miễn phí · 1/tháng',
+    lotte: 'Lotte World', lotted: 'Giảm 42% vé ngày',
+    everland: 'Everland', everlandd: 'Giảm 40% vé ngày',
+    caribbean: 'Caribbean Bay', caribbeand: 'Giảm 40% (+1 30%)',
+    seoulsky: 'Seoul Sky', seoulskyd: 'Giảm 30% (+3 10%)',
+    tagEasy: 'Mã vạch', tagVip: 'VIP',
+    moreTitle: 'Thêm ưu đãi', moreArrow: 'Xem hết →',
+    cat1: '☕ Cà phê·Tráng miệng', cat2: '🎢 Công viên',
+    cat3: '🎬 Phim', cat4: '🛍 Mua sắm'
+  },
+  zh: {
+    title: '优惠',
+    gradeText: 'VIP 等级', gradeSub: '每月自动更新',
+    statLabel: '选项',
+    usageLabel: '本月已用', usageCount: '2 / 140',
+    bcTitle: '我的会员条码',
+    bcHint: '结账时出示此页',
+    easyTitle: '推荐优惠',
+    tipTitle: '使用方法', step1: '打开条码', step2: '店内出示', step3: '自动折扣',
+    catAll: '全部', catFb: '便利店·F&B', catCafe: '咖啡', catPark: '主题公园',
+    gs25: 'GS25', gs25d: '满₩1,000减₩100',
+    paris: '巴黎贝甜', parisd: '满₩1,000减₩100',
+    tlj: '多乐之日', tljd: '满₩1,000减₩150',
+    baskin: '芭斯罗缤', baskind: 'Quarter减₩4,000',
+    gsfresh: 'GS THE FRESH', gsfreshd: '满₩50,000减₩2,000',
+    starbucks: '星巴克', starbucksd: '美式咖啡免费 · 月1次',
+    lotte: '乐天世界', lotted: '日票42%折扣',
+    everland: '爱宝乐园', everlandd: '日票本人40%',
+    caribbean: '加勒比湾', caribbeand: '本人40%',
+    seoulsky: '首尔天空', seoulskyd: '本人30%',
+    tagEasy: '条码', tagVip: 'VIP',
+    moreTitle: '更多优惠', moreArrow: '查看 →',
+    cat1: '☕ 咖啡·甜品', cat2: '🎢 主题公园',
+    cat3: '🎬 电影', cat4: '🛍 购物·免税'
+  },
+  ru: {
+    title: 'Льготы',
+    gradeText: 'Уровень VIP', gradeSub: 'Авто продление',
+    statLabel: 'ОПЦИЙ',
+    usageLabel: 'Использовано', usageCount: '2 / 140',
+    bcTitle: 'Мой штрихкод',
+    bcHint: 'Покажите при оплате',
+    easyTitle: 'Рекомендации',
+    tipTitle: 'Как использовать', step1: 'Откр. код', step2: 'Показ', step3: 'Скидка',
+    catAll: 'Все', catFb: 'Магазин·F&B', catCafe: 'Кафе', catPark: 'Парк',
+    gs25: 'GS25', gs25d: '-₩100 на ₩1,000',
+    paris: 'Paris Baguette', parisd: '-₩100 на ₩1,000',
+    tlj: 'Tous Les Jours', tljd: '-₩150 на ₩1,000',
+    baskin: 'Baskin Robbins', baskind: '-₩4,000 Quarter',
+    gsfresh: 'GS THE FRESH', gsfreshd: '-₩2,000 от ₩50,000',
+    starbucks: 'Starbucks', starbucksd: 'Кофе бесплатно · 1/мес',
+    lotte: 'Lotte World', lotted: '42% билет',
+    everland: 'Everland', everlandd: '40% билет',
+    caribbean: 'Caribbean Bay', caribbeand: '40% (+1 30%)',
+    seoulsky: 'Seoul Sky', seoulskyd: '30% (+3 10%)',
+    tagEasy: 'Штрихкод', tagVip: 'VIP',
+    moreTitle: 'Больше льгот', moreArrow: 'Все →',
+    cat1: '☕ Кафе·Десерт', cat2: '🎢 Парк',
+    cat3: '🎬 Кино', cat4: '🛍 Шоппинг'
+  }
+};
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+function setHTML(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = value;
+}
+
+function switchLang(lang) {
+  const t = translations[lang];
+  document.querySelectorAll('.lang-pill').forEach(p => p.classList.remove('active'));
+  const activePill = document.querySelector(`[data-lang="${lang}"]`);
+  if (activePill) activePill.classList.add('active');
+
+  setText('t-title', t.title);
+  setText('t-grade-text', t.gradeText);
+  setText('t-grade-sub', t.gradeSub);
+  setText('t-stat-label', t.statLabel);
+  setText('t-usage-label', t.usageLabel);
+  setText('t-usage-count', t.usageCount);
+  setText('t-bc-title', t.bcTitle);
+  setText('t-bc-hint', t.bcHint);
+  setHTML('t-easy-title', '<em>' + t.easyTitle + '</em>');
+  setText('t-gs25', t.gs25);
+  setText('t-gs25d', t.gs25d);
+  setText('t-paris', t.paris);
+  setText('t-parisd', t.parisd);
+  setText('t-tlj', t.tlj);
+  setText('t-tljd', t.tljd);
+  setText('t-starbucks', t.starbucks);
+  setText('t-starbucksd', t.starbucksd);
+  document.querySelectorAll('.t-tag-easy').forEach(el => el.textContent = t.tagEasy);
+  setText('t-tag-vip', t.tagVip);
+  setText('t-more-title', t.moreTitle);
+  setText('t-more-arrow', t.moreArrow);
+  setText('t-cat1', t.cat1);
+  setText('t-cat2', t.cat2);
+  setText('t-cat3', t.cat3);
+  setText('t-cat4', t.cat4);
+  // Category tab labels
+  setText('t-cat-all', t.catAll);
+  setText('t-cat-fb', t.catFb);
+  setText('t-cat-cafe', t.catCafe);
+  setText('t-cat-park', t.catPark);
+  // New brand cards
+  setText('t-baskin', t.baskin);
+  setText('t-baskind', t.baskind);
+  setText('t-gsfresh', t.gsfresh);
+  setText('t-gsfreshd', t.gsfreshd);
+  setText('t-lotte', t.lotte);
+  setText('t-lotted', t.lotted);
+  setText('t-everland', t.everland);
+  setText('t-everlandd', t.everlandd);
+  setText('t-caribbean', t.caribbean);
+  setText('t-caribbeand', t.caribbeand);
+  setText('t-seoulsky', t.seoulsky);
+  setText('t-seoulskyd', t.seoulskyd);
+  // Usage tip
+  setText('t-tip-title', t.tipTitle);
+  setText('t-step1', t.step1);
+  setText('t-step2', t.step2);
+  setText('t-step3', t.step3);
+}
+
+function filterCat(cat, btn) {
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('.b-card').forEach(card => {
+    if (cat === 'all' || card.dataset.cat === cat) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+}
+</script>
+</head>
+<body>
+
+<!-- Status Bar -->
+<div class="status-bar">
+  <span>9:04</span>
+  <span>●●●●</span>
+</div>
+
+<!-- Top Header -->
+<div class="top-header">
+  <span class="page-title" id="t-title">Benefits</span>
+  <img src="uplus_header_icons.png" alt="" class="header-icons-img">
+</div>
+
+<!-- Language Bar -->
+<div class="lang-bar">
+  <button class="lang-pill" data-lang="ko" onclick="switchLang('ko')">한국어</button>
+  <button class="lang-pill active" data-lang="en" onclick="switchLang('en')">English</button>
+  <button class="lang-pill" data-lang="vi" onclick="switchLang('vi')">Tiếng Việt</button>
+  <button class="lang-pill" data-lang="zh" onclick="switchLang('zh')">中文</button>
+  <button class="lang-pill" data-lang="ru" onclick="switchLang('ru')">Русский</button>
+</div>
+
+<!-- Grade Card -->
+<div class="grade-card">
+  <div class="grade-left">
+    <span class="vip-pill">VIP</span>
+    <div class="grade-text" id="t-grade-text">VIP Grade</div>
+    <div class="grade-sub" id="t-grade-sub">Auto-renewed monthly</div>
+  </div>
+  <div class="grade-right">
+    <div class="grade-num">140<sup>+</sup></div>
+    <div class="grade-label" id="t-stat-label">OPTIONS</div>
+  </div>
+</div>
+
+<!-- Usage Row -->
+<div class="usage-row">
+  <span class="u-label" id="t-usage-label">Used this month</span>
+  <span class="u-count" id="t-usage-count">0 / 140</span>
+</div>
+
+<!-- Barcode Card -->
+<div class="barcode-card">
+  <div class="bc-title" id="t-bc-title">My Membership Barcode</div>
+  <div class="bc-bars"></div>
+  <div class="bc-num">8801 2345 6789 0</div>
+  <div class="bc-hint" id="t-bc-hint">Show this when you pay</div>
+</div>
+
+<!-- Recommended Benefits with Category Tabs -->
+<div class="section">
+  <div class="section-title" id="t-easy-title">Recommended</div>
+
+  <!-- Category Tabs -->
+  <div class="cat-tabs">
+    <button class="cat-tab active" onclick="filterCat('all', this)" id="t-cat-all">All</button>
+    <button class="cat-tab" onclick="filterCat('fb', this)" id="t-cat-fb">Convenience·F&amp;B</button>
+    <button class="cat-tab" onclick="filterCat('cafe', this)" id="t-cat-cafe">Café</button>
+    <button class="cat-tab" onclick="filterCat('park', this)" id="t-cat-park">Theme Park</button>
+  </div>
+
+  <!-- F&B Cards -->
+  <div class="b-card" data-cat="fb">
+    <img src="logo_gs25.png">
+    <div class="b-info"><div class="b-name" id="t-gs25">GS25</div><div class="b-desc" id="t-gs25d">₩100 off per ₩1,000</div></div>
+    <span class="b-tag b-tag-easy t-tag-easy">Barcode</span>
+  </div>
+  <div class="b-card" data-cat="fb">
+    <img src="logo_paris.png">
+    <div class="b-info"><div class="b-name" id="t-paris">Paris Baguette</div><div class="b-desc" id="t-parisd">₩100 off per ₩1,000</div></div>
+    <span class="b-tag b-tag-easy t-tag-easy">Barcode</span>
+  </div>
+  <div class="b-card" data-cat="fb">
+    <img src="logo_tlj.jpg">
+    <div class="b-info"><div class="b-name" id="t-tlj">Tous Les Jours</div><div class="b-desc" id="t-tljd">₩150 off per ₩1,000</div></div>
+    <span class="b-tag b-tag-easy t-tag-easy">Barcode</span>
+  </div>
+  <div class="b-card" data-cat="fb">
+    <img src="logo_baskin.png">
+    <div class="b-info"><div class="b-name" id="t-baskin">Baskin Robbins</div><div class="b-desc" id="t-baskind">₩4,000 off Quarter</div></div>
+    <span class="b-tag b-tag-easy t-tag-easy">Barcode</span>
+  </div>
+  <div class="b-card" data-cat="fb">
+    <img src="logo_gsfresh.png">
+    <div class="b-info"><div class="b-name" id="t-gsfresh">GS THE FRESH</div><div class="b-desc" id="t-gsfreshd">₩2,000 off ₩50,000+</div></div>
+    <span class="b-tag b-tag-easy t-tag-easy">Barcode</span>
+  </div>
+
+  <!-- Café Cards -->
+  <div class="b-card" data-cat="cafe">
+    <img src="logo_starbucks.png">
+    <div class="b-info"><div class="b-name" id="t-starbucks">Starbucks</div><div class="b-desc" id="t-starbucksd">Free Americano · 1/month</div></div>
+    <span class="b-tag b-tag-vip" id="t-tag-vip">VIP</span>
+  </div>
+
+  <!-- Theme Park Cards -->
+  <div class="b-card" data-cat="park">
+    <img src="logo_lotteworld.png">
+    <div class="b-info"><div class="b-name" id="t-lotte">Lotte World</div><div class="b-desc" id="t-lotted">42% off day pass</div></div>
+    <span class="b-tag b-tag-vip">VIP</span>
+  </div>
+  <div class="b-card" data-cat="park">
+    <img src="logo_everland.png">
+    <div class="b-info"><div class="b-name" id="t-everland">Everland</div><div class="b-desc" id="t-everlandd">40% off day pass</div></div>
+    <span class="b-tag b-tag-vip">VIP</span>
+  </div>
+  <div class="b-card" data-cat="park">
+    <img src="logo_caribbeanbay.png">
+    <div class="b-info"><div class="b-name" id="t-caribbean">Caribbean Bay</div><div class="b-desc" id="t-caribbeand">40% off (+1 30%)</div></div>
+    <span class="b-tag b-tag-vip">VIP</span>
+  </div>
+  <div class="b-card" data-cat="park">
+    <img src="logo_seoulsky.png">
+    <div class="b-info"><div class="b-name" id="t-seoulsky">Seoul Sky</div><div class="b-desc" id="t-seoulskyd">30% off (+3 10%)</div></div>
+    <span class="b-tag b-tag-vip">VIP</span>
+  </div>
+</div>
+
+<!-- More Benefits Teaser -->
+<div class="more-section">
+  <div class="more-header">
+    <span class="more-title" id="t-more-title">More benefits</span>
+    <span class="more-arrow" id="t-more-arrow">View all →</span>
+  </div>
+  <div class="more-grid">
+    <span class="more-pill" id="t-cat1">☕ Café·Dessert</span>
+    <span class="more-pill" id="t-cat2">🎢 Theme Park</span>
+    <span class="more-pill" id="t-cat3">🎬 Movie</span>
+    <span class="more-pill" id="t-cat4">🛍 Shopping</span>
+  </div>
+</div>
+
+<!-- Usage Tip (3-step, U+ one card style) -->
+<div class="usage-tip">
+  <div class="tip-title" id="t-tip-title">How to use</div>
+  <div class="tip-steps">
+    <div class="tip-step">
+      <div class="step-circle">1</div>
+      <div class="step-label" id="t-step1">Open barcode</div>
+    </div>
+    <span class="tip-arrow">→</span>
+    <div class="tip-step">
+      <div class="step-circle">2</div>
+      <div class="step-label" id="t-step2">Show at store</div>
+    </div>
+    <span class="tip-arrow">→</span>
+    <div class="tip-step">
+      <div class="step-circle">3</div>
+      <div class="step-label" id="t-step3">Auto discount</div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Nav (real U+ one icons image) -->
+<img src="uplus_bottomnav.png" alt="" class="bottom-nav-img">
+
+<script>switchLang('en');</script>
+</body>
+</html>

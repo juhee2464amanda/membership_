@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Pretendard', 'Noto Sans SC', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Card Deck ── */
+  .deck {
+    height: 100%;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .deck::-webkit-scrollbar { display: none; }
+
+  .card {
+    height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 24px;
+    position: relative;
+    text-align: center;
+  }
+
+  /* Card backgrounds */
+  .card-dark { background: #22171c; color: #fff; }
+  .card-pink { background: #ffdeee; color: #22171c; }
+  .card-white { background: #fff; color: #22171c; }
+  .card-cream { background: #f4f4ee; color: #22171c; }
+
+  /* ── Common ── */
+  .uplus-corner {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #ff2e98;
+    letter-spacing: 0.04em;
+  }
+  .step-num {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.08em;
+  }
+  .card-pink .step-num,
+  .card-white .step-num,
+  .card-cream .step-num { color: rgba(0,0,0,0.3); }
+
+  .swipe-hint {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.05em;
+    animation: bounce 1.6s infinite;
+  }
+  .card-pink .swipe-hint,
+  .card-white .swipe-hint,
+  .card-cream .swipe-hint { color: rgba(0,0,0,0.4); }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.7; }
+    50% { transform: translateY(4px); opacity: 1; }
+  }
+
+  /* ── Welcome (combined) ── */
+  .welcome-tag {
+    display: inline-block;
+    background: #ff2e98;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    letter-spacing: 0.08em;
+  }
+  .welcome-title {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .welcome-title em {
+    color: #ff2e98;
+    font-style: normal;
+  }
+  .welcome-line {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.4;
+    max-width: 280px;
+  }
+  .welcome-highlight {
+    display: block;
+    font-size: 17px;
+    font-weight: 700;
+    color: #ff2e98;
+    line-height: 1.3;
+    margin: 3px 0;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── Generic h2 ── */
+  .card h2 {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  .card h2 em {
+    color: #ff2e98;
+    font-style: normal;
+  }
+  .card .one-line {
+    font-size: 13px;
+    color: #82817e;
+    line-height: 1.5;
+    max-width: 260px;
+  }
+  .card-dark .one-line { color: rgba(255,255,255,0.6); }
+
+  /* ── Welcome big number ── */
+  .welcome-number {
+    font-size: 56px;
+    font-weight: 800;
+    color: #ff2e98;
+    line-height: 1;
+    margin-top: 12px;
+    letter-spacing: -0.02em;
+  }
+  .welcome-number .plus {
+    font-size: 36px;
+    vertical-align: 6px;
+    margin-left: 2px;
+  }
+  .welcome-number-caption {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 6px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Grade announcement (inside VIP콕 card) ── */
+  .grade-mark-inline {
+    display: inline-block;
+    background: #ff2e98;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 14px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Category Card ── */
+  .cat-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #22171c;
+    margin-bottom: 4px;
+  }
+  .cat-sub {
+    font-size: 11px;
+    color: #82817e;
+    margin-bottom: 18px;
+  }
+  .cat-sub em { color: #ff2e98; font-style: normal; font-weight: 700; }
+  .cat-tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    color: #ff2e98;
+    background: rgba(255,46,152,0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-right: 5px;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+  }
+
+  .mini-list {
+    width: 100%;
+    max-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .mini-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 9px 12px;
+    text-align: left;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .card-white .mini-item { background: #f4f4ee; box-shadow: none; }
+  .mini-logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 800;
+    color: #22171c;
+    overflow: hidden;
+  }
+  .card-white .mini-logo { background: #fff; }
+  .mini-logo img { width: 26px; height: auto; }
+  .mini-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .mini-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #22171c;
+    line-height: 1.2;
+  }
+  .mini-benefit {
+    font-size: 11px;
+    color: #82817e;
+    line-height: 1.3;
+    margin-top: 2px;
+  }
+  .mini-benefit strong { color: #22171c; font-weight: 800; }
+  .vip-badge {
+    display: inline-block;
+    background: #ff2e98;
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .upgrade-tease {
+    margin-top: 14px;
+    padding: 8px 12px;
+    background: rgba(255,46,152,0.08);
+    border-left: 2px solid #ff2e98;
+    font-size: 11px;
+    color: #22171c;
+    line-height: 1.5;
+    max-width: 280px;
+    text-align: left;
+    border-radius: 0 4px 4px 0;
+  }
+  .upgrade-tease strong { color: #ff2e98; font-weight: 700; }
+  .mini-vip-check {
+    flex-shrink: 0;
+    align-self: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #ff2e98;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* ── How to use ── */
+  .how-sub {
+    font-size: 13px;
+    color: #82817e;
+    line-height: 1.55;
+    max-width: 260px;
+    margin-top: 8px;
+  }
+  .how-sub strong { color: #22171c; font-weight: 800; }
+  .barcode-mockup {
+    margin-top: 18px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 16px 18px 10px;
+    display: inline-block;
+  }
+  .barcode-mockup svg {
+    display: block;
+  }
+  .barcode-num {
+    font-size: 9px;
+    color: #999;
+    letter-spacing: 0.15em;
+    margin-top: 6px;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* ── CTA ── */
+  .cta-btn {
+    display: inline-block;
+    background: #ff2e98;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 15px 40px;
+    border-radius: 30px;
+    text-decoration: none;
+    margin-top: 18px;
+    box-shadow: 0 4px 20px rgba(255,46,152,0.4);
+  }
+  .cta-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- Card 1 — Welcome + Auto + 140+ -->
+  <div class="card card-dark">
+    <span class="uplus-corner">U+</span>
+    <span class="step-num">01 / 04</span>
+    <span class="welcome-tag">WELCOME</span>
+    <h1 class="welcome-title">U+ 가입을<br>축하해요</h1>
+    <p class="welcome-line">매달 별도의 가입 없이,</p>
+    <p class="welcome-highlight">자동으로 받는 혜택이</p>
+    <p class="welcome-line">기다리고 있어요</p>
+    <div class="welcome-number">140<span class="plus">+</span></div>
+    <div class="swipe-hint">↓ 아래로 스와이프</div>
+  </div>
+
+  <!-- Card 2 — Category: 매일 (편의점·베이커리) — VIP 우대 할인 -->
+  <div class="card card-cream">
+    <span class="step-num">02 / 04</span>
+    <p class="cat-title">매일 가는<br>편의점부터 베이커리까지!</p>
+    <p class="cat-sub">바코드만 보여주면 할인!</p>
+    <div class="mini-list">
+      <div class="mini-item">
+        <div class="mini-logo"><img src="logo_gs25.png" alt=""></div>
+        <div class="mini-info">
+          <p class="mini-name">GS25</p>
+          <p class="mini-benefit"><strong>1,000원당 100원</strong> 할인</p>
+        </div>
+        <div class="mini-vip-check">✓</div>
+      </div>
+      <div class="mini-item">
+        <div class="mini-logo"><img src="logo_paris.png" alt=""></div>
+        <div class="mini-info">
+          <p class="mini-name">파리바게뜨</p>
+          <p class="mini-benefit"><strong>1,000원당 100원</strong> 할인</p>
+        </div>
+        <div class="mini-vip-check">✓</div>
+      </div>
+      <div class="mini-item">
+        <div class="mini-logo"><img src="logo_tlj.jpg" alt=""></div>
+        <div class="mini-info">
+          <p class="mini-name">뚜레쥬르</p>
+          <p class="mini-benefit"><strong>1,000원당 150원</strong> 할인</p>
+        </div>
+        <div class="mini-vip-check">✓</div>
+      </div>
+      <div class="mini-item">
+        <div class="mini-logo"><img src="logo_baskin.png" alt=""></div>
+        <div class="mini-info">
+          <p class="mini-name">배스킨라빈스</p>
+          <p class="mini-benefit">쿼터사이즈 <strong>4,000원 할인</strong></p>
+        </div>
+      </div>
+    </div>
+    <p class="upgrade-tease"><strong>✓</strong> 표시된 혜택은 <strong>VIP</strong>로 일반 고객 대비 할인율이 높아요</p>
+  </div>
+
+  <!-- Card 3 — VIP 전용 혜택 (카페 + 놀이동산 합침) — with grade announcement -->
+  <div class="card card-pink">
+    <span class="step-num">03 / 04</span>
+    <div class="grade-mark-inline">VIP</div>
+    <p class="cat-title">당신은 특별해요</p>
+    <p class="cat-sub"><em>VIP만 받는</em> 전용 혜택이 더 있어요</p>
+    <div class="mini-list">
+      <div class="mini-item">
+        <div class="mini-logo"><img src="logo_starbucks.png" alt=""></div>
+        <div class="mini-info">
+          <p class="mini-name">스타벅스</p>
+          <p class="mini-benefit"><strong>아메리카노 1잔 무료</strong> · 월 1회</p>
+        </div>
+      </div>
+      <div class="mini-item">
+        <div class="mini-logo"><img src="logo_baskin.png" alt=""></div>
+        <div class="mini-info">
+          <p class="mini-name">배스킨라빈스</p>
+          <p class="mini-benefit"><strong>블록팩 1개 무료</strong> · 월 1회</p>
+        </div>
+      </div>
+      <div class="mini-item">
+        <div class="mini-logo"><img src="logo_lotteworld.png" alt=""></div>
+        <div class="mini-info">
+          <p class="mini-name">롯데월드</p>
+          <p class="mini-benefit">종합이용권 <strong>42%</strong> (동반 1인 30%)</p>
+        </div>
+      </div>
+      <div class="mini-item">
+        <div class="mini-logo"><img src="logo_everland.png" alt=""></div>
+        <div class="mini-info">
+          <p class="mini-name">에버랜드</p>
+          <p class="mini-benefit">종일권 본인 <strong>40%</strong></p>
+        </div>
+      </div>
+      <div class="mini-item">
+        <div class="mini-logo"><img src="logo_caribbeanbay.png" alt=""></div>
+        <div class="mini-info">
+          <p class="mini-name">캐리비안베이</p>
+          <p class="mini-benefit">본인 <strong>40%</strong> (동반 1인 30%)</p>
+        </div>
+      </div>
+      <div class="mini-item">
+        <div class="mini-logo"><img src="logo_seoulsky.png" alt=""></div>
+        <div class="mini-info">
+          <p class="mini-name">서울스카이</p>
+          <p class="mini-benefit">본인 <strong>30%</strong> (동반 3인 10%)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4 — How to use + CTA (merged) -->
+  <div class="card card-white">
+    <span class="step-num">04 / 04</span>
+    <h2><strong style="color:#ff2e98;">U+ one 앱</strong>에서<br>바코드를 열고<br>첫 혜택을 경험해보세요!</h2>
+    <div class="barcode-mockup">
+      <svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#22171c">
+          <rect x="6" y="4" width="2" height="48"/>
+          <rect x="10" y="4" width="1" height="48"/>
+          <rect x="13" y="4" width="3" height="48"/>
+          <rect x="18" y="4" width="2" height="48"/>
+          <rect x="22" y="4" width="1" height="48"/>
+          <rect x="25" y="4" width="2" height="48"/>
+          <rect x="29" y="4" width="3" height="48"/>
+          <rect x="34" y="4" width="1" height="48"/>
+          <rect x="37" y="4" width="2" height="48"/>
+          <rect x="41" y="4" width="3" height="48"/>
+          <rect x="46" y="4" width="1" height="48"/>
+          <rect x="49" y="4" width="2" height="48"/>
+          <rect x="53" y="4" width="3" height="48"/>
+          <rect x="58" y="4" width="2" height="48"/>
+          <rect x="62" y="4" width="1" height="48"/>
+          <rect x="65" y="4" width="2" height="48"/>
+          <rect x="69" y="4" width="3" height="48"/>
+          <rect x="74" y="4" width="1" height="48"/>
+          <rect x="77" y="4" width="2" height="48"/>
+          <rect x="81" y="4" width="3" height="48"/>
+          <rect x="86" y="4" width="2" height="48"/>
+          <rect x="90" y="4" width="1" height="48"/>
+          <rect x="93" y="4" width="2" height="48"/>
+          <rect x="97" y="4" width="3" height="48"/>
+          <rect x="102" y="4" width="1" height="48"/>
+          <rect x="105" y="4" width="2" height="48"/>
+          <rect x="109" y="4" width="3" height="48"/>
+          <rect x="114" y="4" width="2" height="48"/>
+          <rect x="118" y="4" width="1" height="48"/>
+          <rect x="121" y="4" width="2" height="48"/>
+          <rect x="125" y="4" width="3" height="48"/>
+          <rect x="130" y="4" width="1" height="48"/>
+          <rect x="133" y="4" width="2" height="48"/>
+          <rect x="137" y="4" width="3" height="48"/>
+          <rect x="142" y="4" width="2" height="48"/>
+          <rect x="146" y="4" width="1" height="48"/>
+          <rect x="149" y="4" width="2" height="48"/>
+          <rect x="153" y="4" width="3" height="48"/>
+          <rect x="158" y="4" width="1" height="48"/>
+          <rect x="161" y="4" width="2" height="48"/>
+          <rect x="165" y="4" width="3" height="48"/>
+          <rect x="170" y="4" width="2" height="48"/>
+          <rect x="174" y="4" width="1" height="48"/>
+          <rect x="177" y="4" width="3" height="48"/>
+          <rect x="182" y="4" width="2" height="48"/>
+          <rect x="186" y="4" width="1" height="48"/>
+          <rect x="189" y="4" width="2" height="48"/>
+          <rect x="193" y="4" width="3" height="48"/>
+        </g>
+      </svg>
+      <p class="barcode-num">U+ MEMBERSHIP</p>
+    </div>
+    <a href="#" class="cta-btn" style="margin-top:14px;">내 바코드 보러가기</a>
+  </div>
+
+</div>
+</body>
+</html>
